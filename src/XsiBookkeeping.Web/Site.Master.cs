@@ -15,7 +15,8 @@ namespace XsiBookkeeping.Web
         protected string LogoUrl = "";
         protected string CurrentUserJs = "";
         protected string RoleJs = "";
-        protected bool ShowAdminNav;
+        protected bool ShowUsersNav;
+        protected bool ShowAuditNav;
         protected bool ShowAssignmentsNav;
 
         protected void Page_Load(object sender, EventArgs e)
@@ -42,11 +43,12 @@ namespace XsiBookkeeping.Web
                 var display = !string.IsNullOrWhiteSpace(user.DisplayName) ? user.DisplayName : user.WindowsLogin;
                 UserDisplayLiteral.Text = HttpUtility.HtmlEncode(display);
                 CurrentUserJs = HttpUtility.JavaScriptStringEncode(display);
-                ShowAdminNav = PermissionMatrix.Can(user.Role, Permission.ManageUsers);
+                ShowUsersNav = PermissionMatrix.Can(user.Role, Permission.ManageUsers);
+                ShowAuditNav = PermissionMatrix.Can(user.Role, Permission.ViewAudit);
                 ShowAssignmentsNav = PermissionMatrix.Can(user.Role, Permission.ManageCompanies);
                 PermissionsJson = BuildPermissionsJson(user.Role);
-                NavUsers.Visible = ShowAdminNav;
-                NavAudit.Visible = ShowAdminNav;
+                NavUsers.Visible = ShowUsersNav;
+                NavAudit.Visible = ShowAuditNav;
                 NavAssignments.Visible = ShowAssignmentsNav;
                 RoleBadgeLiteral.Text = $"<span class=\"ledger-role-badge\">{HttpUtility.HtmlEncode(RoleBadge)}</span>";
                 RoleBadgePanel.Visible = true;
@@ -62,11 +64,11 @@ namespace XsiBookkeeping.Web
             if (ShowAssignmentsNav)
                 NavAssignments.CssClass = "ledger-nav-link" + (path.IndexOf("Assignments", StringComparison.OrdinalIgnoreCase) >= 0 ? " active" : "");
 
-            if (ShowAdminNav)
-            {
+            if (ShowUsersNav)
                 NavUsers.CssClass = "ledger-nav-link" + (path.IndexOf("Users", StringComparison.OrdinalIgnoreCase) >= 0 ? " active" : "");
+
+            if (ShowAuditNav)
                 NavAudit.CssClass = "ledger-nav-link" + (path.IndexOf("AuditLog", StringComparison.OrdinalIgnoreCase) >= 0 ? " active" : "");
-            }
         }
 
         private static string BuildPermissionsJson(AppRole role)

@@ -62,7 +62,7 @@ Use **Sign out** in the top nav to log out.
 | **Overview** | Current-period summary, up-to-date companies, overdue list |
 | **Tasks** | Monthly reconciliation checklist, filters, comments |
 | **Report** | Overall completion stats |
-| **Admin / Users** | Sysadmin user and role management |
+| **Admin / Users** | User and role management (Admin: User/Admin only; Sysadmin: all roles) |
 | **Admin / Audit Log** | Sysadmin audit trail |
 
 ## Roles
@@ -70,8 +70,8 @@ Use **Sign out** in the top nav to log out.
 | Role | Capabilities |
 |------|----------------|
 | **User** | Reconcile, comment, delete own comments |
-| **Admin** | + manage companies/accounts, delete any comment |
-| **Sysadmin** | + manage users/roles, view audit log |
+| **Admin** | + manage companies/accounts, assignments, delete any comment, manage User and Admin accounts |
+| **Sysadmin** | + manage all users/roles (including Sysadmin), view audit log |
 
 ## Tech Stack
 

@@ -271,10 +271,27 @@ namespace XsiBookkeeping.Web.Handlers
                 return;
             }
 
+            AppUser existing = null;
             if (appUserId.HasValue)
+                existing = _userRepo.GetById(appUserId.Value);
+
+            if (existing != null)
             {
-                var existing = _userRepo.GetById(appUserId.Value);
-                if (existing != null && existing.Role == AppRole.Sysadmin && role != AppRole.Sysadmin)
+                if (!UserManagementPolicy.CanModifyUser(actorUser.Role, existing.Role, role))
+                {
+                    WriteJson(context, 403, new { success = false, error = "Not allowed to manage this user or role" });
+                    return;
+                }
+            }
+            else if (!UserManagementPolicy.CanAssignRole(actorUser.Role, role))
+            {
+                WriteJson(context, 403, new { success = false, error = "Not allowed to assign this role" });
+                return;
+            }
+
+            if (existing != null)
+            {
+                if (existing.Role == AppRole.Sysadmin && role != AppRole.Sysadmin)
                 {
                     if (_userRepo.CountActiveSysadmins(appUserId.Value) == 0)
                     {
@@ -282,7 +299,7 @@ namespace XsiBookkeeping.Web.Handlers
                         return;
                     }
                 }
-                if (existing != null && existing.Role == AppRole.Sysadmin && !isActive)
+                if (existing.Role == AppRole.Sysadmin && !isActive)
                 {
                     if (_userRepo.CountActiveSysadmins(appUserId.Value) == 0)
                     {
@@ -308,6 +325,12 @@ namespace XsiBookkeeping.Web.Handlers
                 return;
             }
 
+            if (!UserManagementPolicy.CanViewUser(actorUser.Role, existing.Role))
+            {
+                WriteJson(context, 403, new { success = false, error = "Not allowed to manage this user" });
+                return;
+            }
+
             if (existing.Role == AppRole.Sysadmin && _userRepo.CountActiveSysadmins(appUserId) == 0)
             {
                 WriteJson(context, 400, new { success = false, error = "Cannot deactivate the last Sysadmin" });
@@ -326,6 +349,12 @@ namespace XsiBookkeeping.Web.Handlers
             if (existing == null)
             {
                 WriteJson(context, 404, new { success = false, error = "User not found" });
+                return;
+            }
+
+            if (!UserManagementPolicy.CanViewUser(actorUser.Role, existing.Role))
+            {
+                WriteJson(context, 403, new { success = false, error = "Not allowed to manage this user" });
                 return;
             }
 

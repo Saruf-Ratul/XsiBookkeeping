@@ -1,14 +1,24 @@
+using System;
 using System.Text;
-using XsiBookkeeping.Web;
+using XsiBookkeeping.Web.Models;
 using XsiBookkeeping.Web.Services;
 
 namespace XsiBookkeeping.Web.Admin
 {
-    public partial class AuditLogPage : AdminPageBase
+    public partial class AuditLogPage : LedgerPageBase
     {
         private readonly AuditService _audit = new AuditService();
 
-        protected void Page_Load(object sender, System.EventArgs e)
+        protected override void OnInit(EventArgs e)
+        {
+            base.OnInit(e);
+            if (CurrentAppUser == null || !PermissionMatrix.Can(CurrentAppUser.Role, Permission.ViewAudit))
+            {
+                Response.Redirect("~/AccessDenied.aspx?reason=admin");
+            }
+        }
+
+        protected void Page_Load(object sender, EventArgs e)
         {
             ContentLiteral.Text = BuildHtml();
         }

@@ -22,7 +22,8 @@ namespace XsiBookkeeping.Web.Services
                     Permission.Reconcile,
                     Permission.Comment,
                     Permission.DeleteAnyComment,
-                    Permission.ManageCompanies
+                    Permission.ManageCompanies,
+                    Permission.ManageUsers
                 }
             },
             {

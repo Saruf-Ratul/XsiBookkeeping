@@ -150,6 +150,7 @@
     <Compile Include="Services\AuthHelper.cs" />
     <Compile Include="Services\AuditService.cs" />
     <Compile Include="Services\LedgerRepository.cs" />
+    <Compile Include="Services\UserManagementPolicy.cs" />
     <Compile Include="Services\PermissionMatrix.cs" />
     <Compile Include="Services\PasswordHasher.cs" />
     <Compile Include="Services\PeriodHelper.cs" />

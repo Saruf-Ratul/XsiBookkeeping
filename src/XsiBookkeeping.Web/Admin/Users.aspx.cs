@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Text;
 using XsiBookkeeping.Web;
 using XsiBookkeeping.Web.Models;
@@ -16,7 +17,11 @@ namespace XsiBookkeeping.Web.Admin
 
         private string BuildHtml()
         {
-            var users = _userRepo.GetAll();
+            var assignableRoles = UserManagementPolicy.AssignableRoles(CurrentAppUser.Role);
+            var users = _userRepo.GetAll()
+                .Where(u => UserManagementPolicy.CanViewUser(CurrentAppUser.Role, u.Role))
+                .ToList();
+
             var sb = new StringBuilder();
             sb.Append("<div class=\"ledger-container-wide fade-in\">");
             sb.Append("<div style=\"margin-bottom:24px\">");
@@ -31,9 +36,8 @@ namespace XsiBookkeeping.Web.Admin
             sb.Append("<input class=\"ledger-input\" id=\"new-display-name\" placeholder=\"Display name (optional)\" style=\"min-width:180px;border-color:#e8e4dc\" />");
             sb.Append("<input class=\"ledger-input\" id=\"new-password\" type=\"password\" placeholder=\"Password\" style=\"min-width:160px;border-color:#e8e4dc\" />");
             sb.Append("<select class=\"ledger-input\" id=\"new-role\" style=\"width:auto;border-color:#e8e4dc\">");
-            sb.Append("<option value=\"User\">User</option>");
-            sb.Append("<option value=\"Admin\">Admin</option>");
-            sb.Append("<option value=\"Sysadmin\">Sysadmin</option>");
+            foreach (var role in assignableRoles)
+                sb.Append($"<option value=\"{PermissionMatrix.RoleName(role)}\">{PermissionMatrix.RoleName(role)}</option>");
             sb.Append("</select>");
             sb.Append("<button type=\"button\" class=\"ledger-btn ledger-btn-primary\" data-action=\"admin-add-user\">Add User</button>");
             sb.Append("</div></div>");
@@ -50,7 +54,7 @@ namespace XsiBookkeeping.Web.Admin
                 sb.Append($"<td><code>{H(u.WindowsLogin)}</code></td>");
                 sb.Append($"<td><input class=\"ledger-input admin-inline-input\" data-field=\"displayName\" data-user-id=\"{u.AppUserId}\" value=\"{H(u.DisplayName)}\" /></td>");
                 sb.Append("<td><select class=\"ledger-input admin-inline-input\" data-field=\"role\" data-user-id=\"" + u.AppUserId + "\">");
-                foreach (AppRole role in new[] { AppRole.User, AppRole.Admin, AppRole.Sysadmin })
+                foreach (var role in assignableRoles)
                 {
                     var selected = u.Role == role ? " selected" : "";
                     sb.Append($"<option value=\"{PermissionMatrix.RoleName(role)}\"{selected}>{PermissionMatrix.RoleName(role)}</option>");
