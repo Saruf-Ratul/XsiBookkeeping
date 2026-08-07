@@ -1,0 +1,57 @@
+<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.Master.cs" Inherits="XsiBookkeeping.Web.SiteMaster" %>
+<!DOCTYPE html>
+<html lang="en">
+<head runat="server">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title><asp:ContentPlaceHolder ID="TitleContent" runat="server" /> - Xceleran Ledger</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/Assets/css/ledger.css" rel="stylesheet" runat="server" />
+    <asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</head>
+<body class="ledger-app">
+    <a href="#main-content" class="ledger-skip-link">Skip to main content</a>
+    <form id="form1" runat="server">
+        <nav class="ledger-nav sticky-top">
+            <div class="ledger-nav-inner">
+                <a href="<%= ResolveUrl("~/Overview.aspx") %>" class="ledger-brand-link" aria-label="Xceleran Ledger home">
+                    <img src="<%= LogoUrl %>" alt="Xceleran Ledger" class="ledger-logo" />
+                </a>
+                <div class="ledger-nav-links">
+                    <asp:HyperLink ID="NavOverview" runat="server" NavigateUrl="~/Overview.aspx" CssClass="ledger-nav-link">Overview</asp:HyperLink>
+                    <asp:HyperLink ID="NavTasks" runat="server" NavigateUrl="~/Tasks.aspx" CssClass="ledger-nav-link">Tasks</asp:HyperLink>
+                    <asp:HyperLink ID="NavReport" runat="server" NavigateUrl="~/Report.aspx" CssClass="ledger-nav-link">Report</asp:HyperLink>
+                    <asp:HyperLink ID="NavAssignments" runat="server" NavigateUrl="~/Admin/Assignments.aspx" CssClass="ledger-nav-link" Visible="false">Assignments</asp:HyperLink>
+                    <asp:HyperLink ID="NavUsers" runat="server" NavigateUrl="~/Admin/Users.aspx" CssClass="ledger-nav-link" Visible="false">Users</asp:HyperLink>
+                    <asp:HyperLink ID="NavAudit" runat="server" NavigateUrl="~/Admin/AuditLog.aspx" CssClass="ledger-nav-link" Visible="false">Audit Log</asp:HyperLink>
+                </div>
+                <div class="ledger-nav-user">
+                    <span class="ledger-nav-user-label">Signed in as</span>
+                    <span class="ledger-nav-user-name"><asp:Literal ID="UserDisplayLiteral" runat="server" /></span>
+                    <asp:Panel ID="RoleBadgePanel" runat="server" Visible="false" CssClass="ledger-role-badge-wrap">
+                        <asp:Literal ID="RoleBadgeLiteral" runat="server" />
+                    </asp:Panel>
+                    <asp:HyperLink ID="LogoutLink" runat="server" NavigateUrl="~/Logout.aspx" CssClass="ledger-logout-btn">Sign out</asp:HyperLink>
+                </div>
+            </div>
+        </nav>
+        <main id="main-content" class="ledger-main">
+            <asp:ContentPlaceHolder ID="MainContent" runat="server" />
+        </main>
+        <script type="text/javascript">
+            window.__LEDGER__ = {
+                apiUrl: '<%= ApiUrl %>',
+                currentUser: '<%= CurrentUserJs %>',
+                role: '<%= RoleJs %>',
+                permissions: <%= PermissionsJson %>
+            };
+        </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="<%= ResolveUrl("~/Assets/js/ledger.js") %>"></script>
+        <asp:ContentPlaceHolder ID="ScriptContent" runat="server" />
+    </form>
+</body>
+</html>
